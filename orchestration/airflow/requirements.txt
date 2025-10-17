@@ -1,0 +1,6 @@
+requests
+pyspark==4.0.1
+pytest
+responses
+apache-airflow
+apache-airflow-providers-cncf-kubernetes
