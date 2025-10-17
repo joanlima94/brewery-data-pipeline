@@ -16,8 +16,6 @@ This project implements a **medallion architecture** (Bronze → Silver → Gold
 ## 🏗️ Architecture Overview
 
 
-
-
 ### Layers
 
 - **Bronze**: Raw JSON responses from the API, partitioned by ingestion date.
@@ -29,30 +27,12 @@ This project implements a **medallion architecture** (Bronze → Silver → Gold
 ## 🧪 Key Features
 
 - ✅ **Idempotent daily ingestion** (partitioned by date)
-- ✅ **Resilient API client** with retry logic for `429 Too Many Requests`
 - ✅ **PySpark-based transformation** (scalable, schema-on-read + schema enforcement)
 - ✅ **Snappy-compressed Parquet** output for efficient storage and query performance
 - ✅ **Unit tests** for ingestion and transformation logic
 - ✅ **Airflow DAG** using `KubernetesPodOperator` for task isolation
-- ✅ **Monitoring-ready**: Logs structured for Grafana/Loki; metrics can be exported to Prometheus
+- ✅ **Monitoring-ready**: Logs structured for Grafana; metrics can be exported to Prometheus
 
 ---
 
 ## 📦 Project Structure
-
-
-```bash
-openbrewerydb-data-pipeline/
-├── ingestion/                   # API extraction logic
-│   ├── src/
-│   │   └── extract.py           # Fetches paginated JSON from Open Brewery DB
-│   └── tests/
-├── medallion/
-│   ├── bronze/                  # Raw data (written by ingestion)
-│   ├── silver/                  # Cleaned data (PySpark job)
-│   │   └── process.py
-│   └── gold/                    # (TBD) Aggregated views
-├── runner.py                    # Entry point for local/container execution
-├── requirements.txt             # Python dependencies (requests, pyspark)
-├── Dockerfile                   # Builds container with Java 21 + PySpark
-└── README.md

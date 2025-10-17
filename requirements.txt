@@ -1,4 +1,0 @@
-requests
-pyspark==4.0.1
-pytest
-responses
