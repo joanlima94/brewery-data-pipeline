@@ -46,7 +46,6 @@ def get_breweries_page(page: int, per_page: int = BREWERIES_PER_PAGE) -> List[di
     except requests.ConnectionError:
         logger.error(f"Connection error occurred while fetching breweries page {page}")
         raise
-    
 
 def save_page_to_bronze(data: List[dict], page: int, base_path: Path):
     file_path = base_path / f"page_{page:02d}.json"
