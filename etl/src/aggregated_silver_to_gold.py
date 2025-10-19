@@ -1,8 +1,6 @@
 from pathlib import Path
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import count, current_timestamp
-from datetime import datetime
-from zoneinfo import ZoneInfo
 import logging
 import os
 
@@ -10,10 +8,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    today = datetime.now(ZoneInfo('America/Sao_Paulo')).date()
+    execution_date = os.getenv("EXECUTION_DATE")
     data_root = os.getenv("DATA_OUTPUT_ROOT", "/app/data")
-    silver_path = f"{Path(data_root)}/medallion/silver/breweries/{str(today)}"
-    gold_path = f"{Path(data_root)}/medallion/gold/breweries_agg/{str(today)}"
+    silver_path = Path(data_root) / f"medallion/silver/breweries/{execution_date}"
+    gold_path = Path(data_root) / f"medallion/gold/breweries_agg/{execution_date}"
+    gold_path.mkdir(parents=True, exist_ok=True)
 
     spark = SparkSession.builder \
         .appName("Brewery-Gold-Aggregations") \
@@ -22,7 +21,7 @@ def main():
         .getOrCreate()
 
     try:
-        df_silver = spark.read.parquet(silver_path)
+        df_silver = spark.read.parquet(str(silver_path))
 
         aggregated_at = current_timestamp()
 

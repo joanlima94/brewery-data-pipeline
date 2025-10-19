@@ -23,6 +23,11 @@ with DAG(
         mount_path="/app/data"
     )
 
+    env_vars=[
+            V1EnvVar(name="DATA_OUTPUT_ROOT", value="/app/data"),
+            V1EnvVar(name="EXECUTION_DATE", value="{{ ds }}"),
+        ]
+
     extract_bronze = KubernetesPodOperator(
         task_id="acquisition_api_to_bronze",
         name="acquisition-api-to-bronze",
@@ -34,9 +39,7 @@ with DAG(
         get_logs=True,
         volumes=[volume],
         volume_mounts=[volume_mount],
-        env_vars=[
-            V1EnvVar(name="DATA_OUTPUT_ROOT", value="/app/data")
-        ],
+        env_vars=env_vars,
         in_cluster=False,
         service_account_name="airflow",
         cluster_context="docker-desktop",
@@ -53,9 +56,7 @@ with DAG(
         get_logs=True,
         volumes=[volume],
         volume_mounts=[volume_mount],
-        env_vars=[
-            V1EnvVar(name="DATA_OUTPUT_ROOT", value="/app/data")
-        ],
+        env_vars=env_vars,
         in_cluster=False,
         service_account_name="airflow",
         cluster_context="docker-desktop",
@@ -72,9 +73,7 @@ with DAG(
         get_logs=True,
         volumes=[volume],
         volume_mounts=[volume_mount],
-        env_vars=[
-            V1EnvVar(name="DATA_OUTPUT_ROOT", value="/app/data")
-        ],
+        env_vars=env_vars,
         in_cluster=False,
         service_account_name="airflow",
         cluster_context="docker-desktop",

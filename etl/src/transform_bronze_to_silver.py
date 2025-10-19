@@ -1,8 +1,7 @@
 from pathlib import Path
+from pendulum import today
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, current_timestamp
-from datetime import datetime
-from zoneinfo import ZoneInfo
 import logging
 import os
 
@@ -11,10 +10,11 @@ logger = logging.getLogger(__name__)
 
 def transform_brewery_bronze_to_silver():
 
-    today = datetime.now(ZoneInfo('America/Sao_Paulo')).date()
+    execution_date = os.getenv("EXECUTION_DATE")
     data_root = os.getenv("DATA_OUTPUT_ROOT", "/app/data")
-    bronze_path = f"{Path(data_root)}/medallion/bronze/breweries/{str(today)}"
-    silver_path = f"{Path(data_root)}/medallion/silver/breweries/{str(today)}"
+    bronze_path = Path(data_root) / f"medallion/bronze/breweries/{execution_date}"
+    silver_path = Path(data_root) / f"medallion/silver/breweries/{execution_date}"
+    silver_path.mkdir(parents=True, exist_ok=True)
 
     spark = SparkSession.builder \
         .appName("Brewery-Transformation") \
@@ -24,7 +24,7 @@ def transform_brewery_bronze_to_silver():
         .getOrCreate()
     
     try:
-        df_bronze = spark.read.option("multiline", "true").json(bronze_path)
+        df_bronze = spark.read.option("multiline", "true").json(str(bronze_path))
 
         df_silver = (
             df_bronze.dropDuplicates()
@@ -54,7 +54,7 @@ def transform_brewery_bronze_to_silver():
             .mode("overwrite") \
             .option("compression", "snappy") \
             .partitionBy("country","state") \
-            .parquet(silver_path)
+            .parquet(str(silver_path))
 
         logging.info(f"Saved records in: {silver_path}")
         logging.info(f"Total records in Silver layer: {df_silver.count()}")

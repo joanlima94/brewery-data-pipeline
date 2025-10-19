@@ -2,8 +2,6 @@ import requests
 import json
 import logging
 from pathlib import Path
-from datetime import datetime
-from zoneinfo import ZoneInfo
 from typing import List
 import os
 
@@ -54,9 +52,9 @@ def save_page_to_bronze(data: List[dict], page: int, base_path: Path):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def main():
-    today = datetime.now(ZoneInfo('America/Sao_Paulo')).date()
+    execution_date = os.getenv("EXECUTION_DATE")
     data_root = os.getenv("DATA_OUTPUT_ROOT", "/app/data")
-    bronze_path = f"{Path(data_root)}/medallion/bronze/breweries/{str(today)}"
+    bronze_path = Path(data_root) / f"medallion/bronze/breweries/{execution_date}"
     bronze_path.mkdir(parents=True, exist_ok=True)
 
     total = get_total_breweries()
