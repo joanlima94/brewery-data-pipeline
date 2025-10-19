@@ -4,14 +4,16 @@ from pyspark.sql.functions import count, current_timestamp
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
     today = datetime.now(ZoneInfo('America/Sao_Paulo')).date()
-    silver_path = f"{Path().absolute()}/medallion/silver/breweries/{str(today)}"
-    gold_path = f"{Path().absolute()}/medallion/gold/breweries_agg/{str(today)}"
+    data_root = os.getenv("DATA_OUTPUT_ROOT", "/app/data")
+    silver_path = f"{Path(data_root)}/medallion/silver/breweries/{str(today)}"
+    gold_path = f"{Path(data_root)}/medallion/gold/breweries_agg/{str(today)}"
 
     spark = SparkSession.builder \
         .appName("Brewery-Gold-Aggregations") \

@@ -2,5 +2,5 @@ requests
 pyspark==4.0.1
 pytest
 responses
-apache-airflow
+apache-airflow==2.10.0
 apache-airflow-providers-cncf-kubernetes

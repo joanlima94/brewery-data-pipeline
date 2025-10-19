@@ -4,6 +4,7 @@ from pyspark.sql.functions import col, current_timestamp
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -11,8 +12,9 @@ logger = logging.getLogger(__name__)
 def transform_brewery_bronze_to_silver():
 
     today = datetime.now(ZoneInfo('America/Sao_Paulo')).date()
-    bronze_path = f"{Path().absolute()}/medallion/bronze/breweries/{str(today)}"
-    silver_path = f"{Path().absolute()}/medallion/silver/breweries/{str(today)}"
+    data_root = os.getenv("DATA_OUTPUT_ROOT", "/app/data")
+    bronze_path = f"{Path(data_root)}/medallion/bronze/breweries/{str(today)}"
+    silver_path = f"{Path(data_root)}/medallion/silver/breweries/{str(today)}"
 
     spark = SparkSession.builder \
         .appName("Brewery-Transformation") \

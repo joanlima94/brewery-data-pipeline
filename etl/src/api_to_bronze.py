@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import List
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -54,7 +55,8 @@ def save_page_to_bronze(data: List[dict], page: int, base_path: Path):
 
 def main():
     today = datetime.now(ZoneInfo('America/Sao_Paulo')).date()
-    bronze_path = Path("medallion/bronze/breweries") / str(today)
+    data_root = os.getenv("DATA_OUTPUT_ROOT", "/app/data")
+    bronze_path = f"{Path(data_root)}/medallion/bronze/breweries/{str(today)}"
     bronze_path.mkdir(parents=True, exist_ok=True)
 
     total = get_total_breweries()
